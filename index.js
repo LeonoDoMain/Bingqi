@@ -281,6 +281,7 @@ const getSelectedPiece = () => {
     type_elements.forEach((e)=> {
         if(e.checked) result.type = e.value;
     });
+    if (result.color === "blank") return null;
     return {
         "soldier": new Soldier(result.color),
         "horse": new Horse(result.color),

@@ -3,7 +3,10 @@
   <head>
     <title>兵棋 Bingqi</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="stylesheet" href="index.css" />
     <script src="index.js"></script>
   </head>
@@ -16,13 +19,17 @@
       <div class="btns">
         <div class="btn" onclick="reset()">重置</div>
         <div class="btn" id="edit_btn" onclick="edit()">开启编辑模式</div>
-        <div class="btn" id="edit_btn" onclick="window.location='/README.md'">查看规则</div>
+        <div class="btn" id="edit_btn" onclick="window.location='/README.md'">
+          查看规则
+        </div>
       </div>
       <div id="edit_board">
         <input type="radio" name="color" value="black" checked />
         <label for="color_black">黑</label>
         <input type="radio" name="color" value="red" />
         <label for="color_red">红</label>
+        <input type="radio" name="color" value="blank" />
+        <label for="color_blank">空</label>
         <br />
         <input type="radio" name="type" value="soldier" checked />
         <label for="type_soldier">兵</label>
