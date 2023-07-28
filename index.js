@@ -119,6 +119,7 @@ function* gameGenerator() {
                 return;
             }
         }
+
         selected = false;
         while (true) {
             yield;
@@ -129,44 +130,33 @@ function* gameGenerator() {
             break;
         }
         selected = true;
+        
         if (b_p1.type === "chariot") {
-            let movec = 2;
-            let pushc = 1;
+            let movepushc = 2;
             let p2;
-            while (!((movec + pushc) === 1)) {
-                if (pushc === 0) {
-                    let green_positions = getGreenPositions(p1);
-                    if (green_positions.length === 0) break;
-                    draw(green_positions, "green");
-                    while (true) {
-                        yield;
-                        p2 = { i: current_i, j: current_j };
-                        if (positionIn(p2, green_positions)) break;
-                    }
+            while (movepushc) {
+                let yellow_positions = getYellowPositions(p1);
+                let green_positions = getGreenPositions(p1);
+                if (green_positions.length + yellow_positions.length === 0) break;
+                draw(yellow_positions, "yellow");
+                draw(green_positions, "green");
+
+                while (true) {
+                    yield;
+                    p2 = { i: current_i, j: current_j };
+                    if (p1.i === p2.i && p1.j === p2.j && movepushc !== 2) break;
+                    if (positionIn(p2, [...yellow_positions, ...green_positions]))
+                        break;
+                }
+                if (p1.i === p2.i && p1.j === p2.j && movepushc !== 2) break;
+
+                if (positionIn(p2, green_positions)) {
                     move(p1, p2);
                     p1 = p2;
-                    movec--;
                 } else {
-                    let yellow_positions = getYellowPositions(p1);
-                    let green_positions = getGreenPositions(p1);
-                    if (green_positions.length + yellow_positions.length === 0) break;
-                    draw(yellow_positions, "yellow");
-                    draw(green_positions, "green");
-                    while (true) {
-                        yield;
-                        p2 = { i: current_i, j: current_j };
-                        if (positionIn(p2, [...yellow_positions, ...green_positions]))
-                            break;
-                    }
-                    if (positionIn(p2, green_positions)) {
-                        move(p1, p2);
-                        p1 = p2;
-                        movec--;
-                    } else {
-                        push(p1, p2);
-                        pushc--;
-                    }
+                    push(p1, p2);
                 }
+                movepushc--;
             }
         } else {
             let green_positions = getGreenPositions(p1);
