@@ -130,25 +130,32 @@ function* gameGenerator() {
             break;
         }
         selected = true;
-        
+
         if (b_p1.type === "chariot") {
             let movepushc = 2;
             let p2;
             while (movepushc) {
                 let yellow_positions = getYellowPositions(p1);
                 let green_positions = getGreenPositions(p1);
-                if (green_positions.length + yellow_positions.length === 0) break;
+                if (green_positions.length + yellow_positions.length === 0) {
+                    counter--;
+                    break;
+                }
                 draw(yellow_positions, "yellow");
                 draw(green_positions, "green");
 
                 while (true) {
                     yield;
                     p2 = { i: current_i, j: current_j };
-                    if (p1.i === p2.i && p1.j === p2.j && movepushc !== 2) break;
+                    if (p1.i === p2.i && p1.j === p2.j) break;
                     if (positionIn(p2, [...yellow_positions, ...green_positions]))
                         break;
                 }
-                if (p1.i === p2.i && p1.j === p2.j && movepushc !== 2) break;
+                if (p1.i === p2.i && p1.j === p2.j) {
+                    if (movepushc === 2) counter--;
+                    refreshBoard();
+                    break;
+                }
 
                 if (positionIn(p2, green_positions)) {
                     move(p1, p2);
@@ -164,13 +171,20 @@ function* gameGenerator() {
             green_positions.forEach(e => {
                 drawBackgroundColor(e, "green");
             });
+
+            let p_new;
             while (true) {
                 yield;
-                let p_new = { i: current_i, j: current_j };
+                p_new = { i: current_i, j: current_j };
+                if (p1.i === p_new.i && p1.j === p_new.j) break;
                 if (!move(p1, p_new)) {
                     continue;
                 };
                 break;
+            }
+            if (p1.i === p_new.i && p1.j === p_new.j) {
+                counter--;
+                refreshBoard();
             }
         }
         counter++;
