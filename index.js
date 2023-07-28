@@ -55,42 +55,18 @@ const getYellowPositions = (p) => {
     let result = [];
     let b_p = board[p.i][p.j];
     const isLegal = (p) => p.i >= 0 && p.i <= 5 && p.j >= 0 && p.j <= 5;
-    for (let k = 1; k <= 6; k++) {
-        if (!isLegal({ i: p.i + k, j: p.j }) ||
-            !isLegal({ i: p.i + k + 1, j: p.j })) break;
-        if (board[p.i + k][p.j] === null) continue;
-        if (board[p.i + k][p.j].color === b_p.color) break;
-        if (board[p.i + k + 1][p.j] !== null) break;
-        result.push({ i: p.i + k, j: p.j });
-        break;
-    }
-    for (let k = 1; k <= 6; k++) {
-        if (!isLegal({ i: p.i - k, j: p.j }) ||
-            !isLegal({ i: p.i - k - 1, j: p.j })) break;
-        if (board[p.i - k][p.j] === null) continue;
-        if (board[p.i - k][p.j].color === b_p.color) break;
-        if (board[p.i - k - 1][p.j] !== null) break;
-        result.push({ i: p.i - k, j: p.j });
-        break;
-    }
-    for (let k = 1; k <= 6; k++) {
-        if (!isLegal({ i: p.i, j: p.j + k }) ||
-            !isLegal({ i: p.i, j: p.j + k + 1 })) break;
-        if (board[p.i][p.j + k] === null) continue;
-        if (board[p.i][p.j + k].color === b_p.color) break;
-        if (board[p.i][p.j + k + 1] !== null) break;
-        result.push({ i: p.i, j: p.j + k });
-        break;
-    }
-    for (let k = 1; k <= 6; k++) {
-        if (!isLegal({ i: p.i, j: p.j - k }) ||
-            !isLegal({ i: p.i, j: p.j - k - 1 })) break;
-        if (board[p.i][p.j - k] === null) continue;
-        if (board[p.i][p.j - k].color === b_p.color) break;
-        if (board[p.i][p.j - k - 1] !== null) break;
-        result.push({ i: p.i, j: p.j - k });
-        break;
-    }
+    if (isLegal({ i: p.i + 1, j: p.j }) && isLegal({ i: p.i + 2, j: p.j }))
+        if (board[p.i + 1][p.j]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i + 2][p.j])
+            result.push({ i: p.i + 1, j: p.j });
+    if (isLegal({ i: p.i - 1, j: p.j }) && isLegal({ i: p.i - 2, j: p.j }))
+        if (board[p.i - 1][p.j]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i - 2][p.j])
+            result.push({ i: p.i - 1, j: p.j });
+    if (isLegal({ i: p.i, j: p.j + 1 }) && isLegal({ i: p.i, j: p.j + 2 }))
+        if (board[p.i][p.j + 1]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i][p.j + 2])
+            result.push({ i: p.i, j: p.j + 1 });
+    if (isLegal({ i: p.i, j: p.j - 1 }) && isLegal({ i: p.i, j: p.j - 2 }))
+        if (board[p.i][p.j - 1]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i][p.j - 2])
+            result.push({ i: p.i, j: p.j - 1 });
     return result;
 }
 
@@ -118,9 +94,9 @@ function* gameGenerator() {
     while (true) {
         if (counter % 2 === 0) {
             turn_element.innerHTML = `${{ "black": "Black", "red": "Red" }[redOrBlack()]}'s Turn`;
-            for(let i = 0; i < 6; i++){
-                for(let j = 0; j < 6; j++){
-                    if(board[i][j] === null) continue;
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    if (board[i][j] === null) continue;
                     board[i][j].moved = false;
                 }
             }
@@ -231,7 +207,7 @@ const move = (p1, p2) => {
     [board[p1.i][p1.j], board[p2.i][p2.j]] = [board[p2.i][p2.j], board[p1.i][p1.j]];
     judgeDeath();
     refreshBoard();
-    if(board[p2.i][p2.j]) board[p2.i][p2.j].moved = true;
+    if (board[p2.i][p2.j]) board[p2.i][p2.j].moved = true;
     return true;
 }
 
@@ -275,11 +251,11 @@ const getSelectedPiece = () => {
     };
     let color_elements = document.getElementsByName("color");
     let type_elements = document.getElementsByName("type");
-    color_elements.forEach((e)=> {
-        if(e.checked) result.color = e.value;
+    color_elements.forEach((e) => {
+        if (e.checked) result.color = e.value;
     });
-    type_elements.forEach((e)=> {
-        if(e.checked) result.type = e.value;
+    type_elements.forEach((e) => {
+        if (e.checked) result.type = e.value;
     });
     if (result.color === "blank") return null;
     return {
