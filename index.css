@@ -1,0 +1,44 @@
+body {
+    margin: 20pt;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    flex-direction: column;
+    user-select: none;
+}
+
+.container .btn {
+    border-radius: 400pt;
+    background-color: black;
+    color: white;
+    padding: 5pt;
+    font-size: 10pt;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    margin: 5pt;
+}
+
+#board td {
+    background-color: bisque;
+    text-align: center;
+    font-size: 18pt;
+    width: 30pt;
+    height: 30pt;
+    cursor: crosshair;
+}
+
+.btns {
+    margin-top: 15pt;
+    display: flex ;
+    flex-direction: row;
+}
+#edit_board {
+    border: 1pt solid black;
+    visibility: hidden;
+}
