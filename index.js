@@ -187,7 +187,7 @@ function* gameGenerator() {
                 refreshBoard();
             }
         }
-        judgeDeath({"red": "black", "black": "red"}[redOrBlack()]);
+        if (counter % 2 === 1) judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
         counter++;
     }
 }
