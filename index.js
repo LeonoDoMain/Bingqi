@@ -90,6 +90,8 @@ function* gameGenerator() {
     const redOrBlack = () => (getTurn() - 1) % 2 ? "red" : "black";
     const turn_element = document.getElementById("turn");
 
+    const playAudio = () => new Audio("./piece.ogg").play();
+
     let p1, b_p1;
     while (true) {
         if (counter % 2 === 0) {
@@ -164,6 +166,7 @@ function* gameGenerator() {
                     push(p1, p2);
                 }
                 movepushc--;
+                playAudio();
             }
         } else {
             let green_positions = getGreenPositions(p1);
@@ -185,7 +188,7 @@ function* gameGenerator() {
             if (p1.i === p_new.i && p1.j === p_new.j) {
                 counter--;
                 refreshBoard();
-            }
+            } else playAudio();
         }
         if (counter % 2 === 1) {
             judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
