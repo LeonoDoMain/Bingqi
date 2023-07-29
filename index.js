@@ -50,6 +50,8 @@ let selected = false;
 
 let edit_mode = false;
 
+const audio = new Audio("./piece.ogg");
+
 
 const getYellowPositions = (p) => {
     let result = [];
@@ -90,7 +92,7 @@ function* gameGenerator() {
     const redOrBlack = () => (getTurn() - 1) % 2 ? "red" : "black";
     const turn_element = document.getElementById("turn");
 
-    const playAudio = () => new Audio("./piece.ogg").play();
+    const playAudio = () => audio.play();
 
     let p1, b_p1;
     while (true) {
