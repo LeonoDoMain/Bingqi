@@ -187,7 +187,10 @@ function* gameGenerator() {
                 refreshBoard();
             }
         }
-        if (counter % 2 === 1) judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
+        if (counter % 2 === 1) {
+            judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
+            judgeDeath(redOrBlack());
+        }
         counter++;
     }
 }
@@ -325,7 +328,7 @@ const init = () => {
     reset();
 }
 
-const judgeDeath = (first_color) => {
+const judgeDeath = (color) => {
     const findDeadA = (map) => {
         let linkedBlocksGroups = new Array();
         const isInLinkedBlocksGroups = (block) => {
@@ -355,32 +358,26 @@ const judgeDeath = (first_color) => {
         return linkedBlocksGroups;
     }
 
-    const allLinkedBlocksGroups = new Array();
-    for (let color of [first_color, { "red": "black", "black": "red" }[first_color]]) {
-        let map = Array(6).fill(0).map(() => Array(6).fill("C"));
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 6; j++) {
-                if (board[i][j]?.color === color) {
-                    map[i][j] = "A";
-                }
+    let map = Array(6).fill(0).map(() => Array(6).fill("C"));
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 6; j++) {
+            if (board[i][j]?.color === color) {
+                map[i][j] = "A";
             }
         }
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 6; j++) {
-                if (board[i][j]?.color !== color && board[i][j]) {
-                    map[i][j] = "B";
-                }
-            }
-        }
-        allLinkedBlocksGroups.push(findDeadA(map));
     }
-    for (const linkedBlocksGroups of allLinkedBlocksGroups) {
-        for (const linkedBlocks of linkedBlocksGroups) {
-            if (linkedBlocks.some((b) => b.alive)) continue;
-            for (const block of linkedBlocks) {
-                board[block.position.i][block.position.j] = null;
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 6; j++) {
+            if (board[i][j]?.color !== color && board[i][j]) {
+                map[i][j] = "B";
             }
         }
+    }
+    const linkedBlocksGroups = findDeadA(map);
+
+    for (const linkedBlocks of linkedBlocksGroups) {
+        if (linkedBlocks.some((b) => b.alive)) continue;
+        for (const block of linkedBlocks) board[block.position.i][block.position.j] = null;
     }
     refreshBoard();
 }
