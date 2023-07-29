@@ -187,6 +187,7 @@ function* gameGenerator() {
                 refreshBoard();
             }
         }
+        judgeDeath({"red": "black", "black": "red"}[redOrBlack()]);
         counter++;
     }
 }
@@ -209,7 +210,6 @@ const move = (p1, p2) => {
     b_p1 = board[p1.i][p1.j];
     if (!b_p1.isReachable(p1, p2)) return false;
     [board[p1.i][p1.j], board[p2.i][p2.j]] = [board[p2.i][p2.j], board[p1.i][p1.j]];
-    judgeDeath();
     refreshBoard();
     if (board[p2.i][p2.j]) board[p2.i][p2.j].moved = true;
     return true;
@@ -226,7 +226,6 @@ const push = (p1, p2) => {
             let pp1 = p2;
             let pp2 = { i: p2.i + direction.i, j: p2.j + direction.j };
             [board[pp1.i][pp1.j], board[pp2.i][pp2.j]] = [board[pp2.i][pp2.j], board[pp1.i][pp1.j]];
-            judgeDeath();
             refreshBoard();
             board[p1.i][p1.j].moved = true;
             return true;
@@ -326,7 +325,7 @@ const init = () => {
     reset();
 }
 
-const judgeDeath = () => {
+const judgeDeath = (first_color) => {
     const findDeadA = (map) => {
         let linkedBlocksGroups = new Array();
         const isInLinkedBlocksGroups = (block) => {
@@ -357,7 +356,7 @@ const judgeDeath = () => {
     }
 
     const allLinkedBlocksGroups = new Array();
-    for (let color of ["red", "black"]) {
+    for (let color of [first_color, { "red": "black", "black": "red" }[first_color]]) {
         let map = Array(6).fill(0).map(() => Array(6).fill("C"));
         for (let i = 0; i < 6; i++) {
             for (let j = 0; j < 6; j++) {
@@ -383,4 +382,5 @@ const judgeDeath = () => {
             }
         }
     }
+    refreshBoard();
 }
