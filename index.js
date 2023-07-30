@@ -1,3 +1,5 @@
+import { findDeadA, positionIn, reverse } from "./utils.js";
+
 class Soldier {
     constructor(color) {
         this.color = color;
@@ -54,33 +56,30 @@ const audio = new Audio("./piece.ogg");
 
 
 const getYellowPositions = (p) => {
-    let result = [];
-    let b_p = board[p.i][p.j];
+    const result = [];
+    const b_p = board[p.i][p.j];
     const isLegal = (p) => p.i >= 0 && p.i <= 5 && p.j >= 0 && p.j <= 5;
     if (isLegal({ i: p.i + 1, j: p.j }) && isLegal({ i: p.i + 2, j: p.j }))
-        if (board[p.i + 1][p.j]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i + 2][p.j])
+        if (board[p.i + 1][p.j]?.color === reverse[b_p.color] && !board[p.i + 2][p.j])
             result.push({ i: p.i + 1, j: p.j });
     if (isLegal({ i: p.i - 1, j: p.j }) && isLegal({ i: p.i - 2, j: p.j }))
-        if (board[p.i - 1][p.j]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i - 2][p.j])
+        if (board[p.i - 1][p.j]?.color === reverse[b_p.color] && !board[p.i - 2][p.j])
             result.push({ i: p.i - 1, j: p.j });
     if (isLegal({ i: p.i, j: p.j + 1 }) && isLegal({ i: p.i, j: p.j + 2 }))
-        if (board[p.i][p.j + 1]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i][p.j + 2])
+        if (board[p.i][p.j + 1]?.color === reverse[b_p.color] && !board[p.i][p.j + 2])
             result.push({ i: p.i, j: p.j + 1 });
     if (isLegal({ i: p.i, j: p.j - 1 }) && isLegal({ i: p.i, j: p.j - 2 }))
-        if (board[p.i][p.j - 1]?.color === { "red": "black", "black": "red" }[b_p.color] && !board[p.i][p.j - 2])
+        if (board[p.i][p.j - 1]?.color === reverse[b_p.color] && !board[p.i][p.j - 2])
             result.push({ i: p.i, j: p.j - 1 });
     return result;
 }
 
 const getGreenPositions = (p) => {
-    let positions = [];
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 6; j++) {
-            if (board[p.i][p.j]?.isReachable(p, { i, j })) {
+    const positions = [];
+    for (let i = 0; i < 6; i++)
+        for (let j = 0; j < 6; j++)
+            if (board[p.i][p.j]?.isReachable(p, { i, j }))
                 positions.push({ i, j });
-            }
-        }
-    }
     return positions;
 }
 
@@ -105,23 +104,23 @@ function* gameGenerator() {
                 }
             }
         }
-        {
-            lose = true;
-            for (let i = 0; i < 6; i++) {
-                for (let j = 0; j < 6; j++) {
-                    if (board[i][j] === null) continue;
-                    if (board[i][j].color !== redOrBlack()) continue;
-                    if (getGreenPositions({ i, j }).length !== 0 && !board[i][j].moved) {
-                        lose = false;
-                    }
+
+        // 胜负判断
+        let lose = true;
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 6; j++) {
+                if (board[i][j] === null) continue;
+                if (board[i][j].color !== redOrBlack()) continue;
+                if (getGreenPositions({ i, j }).length !== 0 && !board[i][j].moved) {
+                    lose = false;
                 }
             }
-            if (lose) {
-                turn_element.innerHTML = `${{ "black": "Red", "red": "Black" }[redOrBlack()]}'s Win`;
-                alert(`${redOrBlack()} lose`);
-                gameover = true;
-                return;
-            }
+        }
+        if (lose) {
+            turn_element.innerHTML = `${{ "black": "Red", "red": "Black" }[redOrBlack()]}'s Win`;
+            alert(`${redOrBlack()} lose`);
+            gameover = true;
+            return;
         }
 
         selected = false;
@@ -135,9 +134,9 @@ function* gameGenerator() {
         }
         selected = true;
 
+        let p2;
         if (b_p1.type === "chariot") {
             let movepushc = 2;
-            let p2;
             while (movepushc) {
                 let yellow_positions = getYellowPositions(p1);
                 let green_positions = getGreenPositions(p1);
@@ -165,11 +164,12 @@ function* gameGenerator() {
                 if (positionIn(p2, green_positions)) {
                     move(p1, p2);
                     p1 = p2;
+                    b_p1 = board[p1.i][p1.j];
                 } else {
                     push(p1, p2);
                 }
                 movepushc--;
-                judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
+                judgeDeath(reverse[redOrBlack()]);
             }
         } else {
             let green_positions = getGreenPositions(p1);
@@ -178,29 +178,26 @@ function* gameGenerator() {
                 drawBackgroundColor(e, "green");
             });
 
-            let p_new;
             while (true) {
                 yield;
-                p_new = { i: current_i, j: current_j };
-                if (p1.i === p_new.i && p1.j === p_new.j) break;
-                if (!move(p1, p_new)) {
-                    continue;
-                };
+                p2 = { i: current_i, j: current_j };
+                if (p1.i === p2.i && p1.j === p2.j) break;
+                if (!move(p1, p2)) continue;
                 break;
             }
-            if (p1.i === p_new.i && p1.j === p_new.j) {
+            // 取消移动
+            if (p1.i === p2.i && p1.j === p2.j) {
                 counter--;
                 refreshBoard();
             } else {
                 playAudio()
-                judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
-            };
+                judgeDeath(reverse[redOrBlack()]);
+            }
         }
         counter++;
     }
 }
 
-const positionIn = (p, positions) => positions.some(e => e.i === p.i && e.j === p.j);
 
 let game = gameGenerator();
 
@@ -215,29 +212,29 @@ const drawBackgroundColor = (p, color) => {
 }
 
 const move = (p1, p2) => {
-    b_p1 = board[p1.i][p1.j];
+    const b_p1 = board[p1.i][p1.j];
     if (!b_p1.isReachable(p1, p2)) return false;
     [board[p1.i][p1.j], board[p2.i][p2.j]] = [board[p2.i][p2.j], board[p1.i][p1.j]];
+    board[p2.i][p2.j].moved = true;
     refreshBoard();
-    if (board[p2.i][p2.j]) board[p2.i][p2.j].moved = true;
     return true;
 }
 
 const push = (p1, p2) => {
-    let yellow_positions = getYellowPositions(p1);
+    const yellow_positions = getYellowPositions(p1);
     yellow_positions.forEach(position => {
         if (p2.i === position.i && p2.j === position.j) {
-            let direction = {
+            const direction = {
                 i: (position.i - p1.i) > 0 ? 1 : (position.i - p1.i < 0 ? -1 : 0),
                 j: (position.j - p1.j) > 0 ? 1 : (position.j - p1.j < 0 ? -1 : 0)
             };
-            let pp1 = p2;
-            let pp2 = { i: p2.i + direction.i, j: p2.j + direction.j };
+            const pp1 = p2;
+            const pp2 = { i: p2.i + direction.i, j: p2.j + direction.j };
             [board[pp1.i][pp1.j], board[pp2.i][pp2.j]] = [board[pp2.i][pp2.j], board[pp1.i][pp1.j]];
             refreshBoard();
             board[p1.i][p1.j].moved = true;
             return true;
-        };
+        }
     });
     return false;
 }
@@ -256,12 +253,12 @@ const refreshBoard = () => {
 }
 
 const getSelectedPiece = () => {
-    let result = {
+    const result = {
         color: null,
         type: null
     };
-    let color_elements = document.getElementsByName("color");
-    let type_elements = document.getElementsByName("type");
+    const color_elements = document.getElementsByName("color");
+    const type_elements = document.getElementsByName("type");
     color_elements.forEach((e) => {
         if (e.checked) result.color = e.value;
     });
@@ -269,7 +266,7 @@ const getSelectedPiece = () => {
         if (e.checked) result.type = e.value;
     });
     if (result.color === "blank") return null;
-    return {
+    else return {
         "soldier": new Soldier(result.color),
         "horse": new Horse(result.color),
         "chariot": new Chariot(result.color)
@@ -298,12 +295,10 @@ const reset = () => {
             const td = document.createElement('td');
             td.onclick = () => {
                 if (edit_mode) {
-                    let p = getSelectedPiece();
-                    board[i][j] = p;
+                    board[i][j] = getSelectedPiece();
                     refreshBoard();
                     return;
                 }
-
                 if (gameover) return;
                 current_i = i;
                 current_j = j;
@@ -321,68 +316,32 @@ const reset = () => {
 const edit = () => {
     if (selected) return;
     edit_mode = !edit_mode;
-    document.getElementById("edit_btn").innerHTML = edit_mode ? "关闭编辑模式" : "开启编辑模式";
-    if (edit_mode) {
-        document.getElementById("edit_board").style.visibility = "visible";
-    } else {
-        document.getElementById("edit_board").style.visibility = "hidden";
-    }
-}
-
-const init = () => {
-    reset();
+    const edit_btn = document.getElementById("edit_btn");
+    const edit_board = document.getElementById("edit_board");
+    edit_btn.innerHTML = edit_mode ? "关闭编辑模式" : "开启编辑模式";
+    edit_board.style.visibility = edit_mode ? "visible" : "hidden";
 }
 
 const judgeDeath = (color) => {
-    const findDeadA = (map) => {
-        let linkedBlocksGroups = new Array();
-        const isInLinkedBlocksGroups = (block) => {
-            for (let blocks of linkedBlocksGroups) if (blocks.some((b) => b.position.i === block.i && b.position.j === block.j)) return true;
-            return false;
-        }
-        const lookAround = (block, linkedBlocks) => {
-            const aroundBlocks = [[block.i - 1, block.j], [block.i + 1, block.j], [block.i, block.j - 1], [block.i, block.j + 1]];
-            linkedBlocks.push({ position: block, alive: !!(aroundBlocks.some((b) => map[b[0]]?.[b[1]] === "C")) });
-            for (const [nr, nc] of aroundBlocks) {
-                if (map[nr]?.[nc] === "A") {
-                    if (!isInLinkedBlocksGroups({ i: nr, j: nc }))
-                        lookAround({ i: nr, j: nc }, linkedBlocks);
-                }
-            }
-        }
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 6; j++) {
-                if (map[i][j] === "A") {
-                    if (isInLinkedBlocksGroups({ i, j })) continue;
-                    let linkedBlocks = new Array();
-                    linkedBlocksGroups.push(linkedBlocks);
-                    lookAround({ i, j }, linkedBlocks);
-                }
-            }
-        }
-        return linkedBlocksGroups;
-    }
-
-    let map = Array(6).fill(0).map(() => Array(6).fill("C"));
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 6; j++) {
-            if (board[i][j]?.color === color) {
+    const map = Array(6).fill(0).map(() => Array(6).fill("C"));
+    for (let i = 0; i < 6; i++)
+        for (let j = 0; j < 6; j++)
+            if (board[i][j]?.color === color)
                 map[i][j] = "A";
-            }
-        }
-    }
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 6; j++) {
-            if (board[i][j]?.color !== color && board[i][j]) {
+    for (let i = 0; i < 6; i++)
+        for (let j = 0; j < 6; j++)
+            if (board[i][j]?.color !== color && board[i][j])
                 map[i][j] = "B";
-            }
-        }
-    }
     const linkedBlocksGroups = findDeadA(map);
 
     for (const linkedBlocks of linkedBlocksGroups) {
         if (linkedBlocks.some((b) => b.alive)) continue;
-        for (const block of linkedBlocks) board[block.position.i][block.position.j] = null;
+        for (const block of linkedBlocks)
+            board[block.position.i][block.position.j] = null;
     }
     refreshBoard();
 }
+
+document.getElementById("reset_btn").onclick = reset;
+document.getElementById("edit_btn").onclick = edit;
+reset();
