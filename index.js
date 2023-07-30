@@ -161,6 +161,7 @@ function* gameGenerator() {
                     break;
                 }
 
+                playAudio();
                 if (positionIn(p2, green_positions)) {
                     move(p1, p2);
                     p1 = p2;
@@ -169,7 +170,6 @@ function* gameGenerator() {
                 }
                 movepushc--;
                 judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
-                playAudio();
             }
         } else {
             let green_positions = getGreenPositions(p1);
@@ -192,8 +192,8 @@ function* gameGenerator() {
                 counter--;
                 refreshBoard();
             } else {
-                judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
                 playAudio()
+                judgeDeath({ "red": "black", "black": "red" }[redOrBlack()]);
             };
         }
         counter++;
