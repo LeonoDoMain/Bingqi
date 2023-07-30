@@ -1,5 +1,8 @@
 body {
     margin: 0;
+    border: 0;
+    background-color: #1abc9c;
+    color: #ecf0f1;
 }
 
 .container {
@@ -12,16 +15,16 @@ body {
     user-select: none;
 }
 
-.container .btn {
+.btn {
     border-radius: 400pt;
-    background-color: black;
-    color: white;
+    background-color: #34495e;
     padding: 5pt;
     font-size: 10pt;
     font-weight: bold;
     cursor: pointer;
     border: none;
     margin: 5pt;
+    box-shadow: 0 0 5pt #34495e;
 }
 
 #board td {
@@ -39,6 +42,6 @@ body {
     flex-direction: row;
 }
 #edit_board {
-    border: 1pt solid black;
+    border: 1pt solid #34495e;
     visibility: hidden;
 }
