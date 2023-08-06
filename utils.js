@@ -1,4 +1,4 @@
-const findDeadA = (map) => {
+export const findDeadA = (map) => {
     let linkedBlocksGroups = new Array();
     const isInLinkedBlocksGroups = (block) => {
         for (let blocks of linkedBlocksGroups) if (blocks.some((b) => b.position.i === block.i && b.position.j === block.j)) return true;
@@ -26,7 +26,5 @@ const findDeadA = (map) => {
     }
     return linkedBlocksGroups;
 }
-const positionIn = (p, positions) => positions.some(e => e.i === p.i && e.j === p.j);
-const reverse = { "red": "black", "black": "red" };
-
-export { findDeadA, positionIn, reverse };
+export const positionIn = (p, positions) => positions.some(e => e.i === p.i && e.j === p.j);
+export const reverse = { "red": "black", "black": "red" };
