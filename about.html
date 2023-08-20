@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>关于</title>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+  </head>
+  <body>
+    <div id="content"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      document.getElementById("content").innerHTML = marked.parse(
+        "# 兵棋 Bingqi 规则\n\n" +
+          "1. 一个双人棋类游戏，分为黑方，红方 ，棋盘大小为6x6，双方各有四个兵，两个车，两个马。胜利条件为吃掉敌方棋子只剩下一个 ，或者使对方重复走相同的棋步五次 。\n" +
+          "\t- 兵的走法为前后左右选择一格移动一格，移动一次 。\n" +
+          "\t- 车的走法为前后左右选择一格移动一格，重复两次，可以选择失去一次移动机会，使一枚前后左右的与车相邻的对方的棋子延车与该棋子的连线向该棋子的方向移动一格，若该棋子将移动的格子上有其他棋子或棋盘边缘阻碍则不执行。\n" +
+          "\t- 马的走法为像周围八个格子选择一格移动一次。\n\n" +
+          "2. 每个棋子前后左右有四个气眼，全部被对方的棋子占领或被棋盘边缘所阻碍则算作死亡从棋盘上取下 。\n" +
+          "3. 一方的棋子之间可以共享气眼，通过站在友军的气眼上面，使双方的气眼共享 。\n" +
+          "4. 双方开始在中央4x4的范围上从中分开 ，各有2x4的八个格子 ，将开局的四个兵，两个车，两个马按照自己的方法安排在棋盘上。\n" +
+          "5. 黑方先执棋移动，移动两个棋子，移动完后红方执棋移动 ，移动两个棋子，如是重复。\n" +
+          "<br />\n" +
+          "## 开发团队：\n" +
+          "### \t - 游戏策划&测试：月(3027883224@qq.com)\n" +
+          "### \t - 程序实现：Leono(1409807664@qq.com)\n" +
+          "<br />\n" +
+          '<a href="./index.html">返回首页</a>'
+      );
+    </script>
+  </body>
+</html>
